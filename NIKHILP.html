@@ -1,0 +1,786 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nikhil Manjunath Putanikar - Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1F2937;
+        }
+        .container {
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .section-heading {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1F2937;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .scroll-to-top {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background-color: #3B82F6;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+        .scroll-to-top.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .modal-overlay.open .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+            transition: color 0.2s ease;
+        }
+        .close-button:hover {
+            color: #1F2937;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .hero-section-gradient {
+            background: linear-gradient(to right, #D1E1F0, #E0F2FE);
+        }
+        .header-active-link {
+            font-weight: 700;
+            color: #2563EB;
+        }
+        .fade-in-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline {
+            position: relative;
+            margin: 0 auto;
+            padding: 1rem 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #E5E7EB;
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .timeline-item .date {
+            width: 45%;
+            padding-right: 1.5rem;
+            text-align: right;
+            font-weight: 600;
+            color: #4B5563;
+            font-size: 1.125rem;
+            align-self: center;
+        }
+        .timeline-item .content {
+            width: 45%;
+            padding-left: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+        .timeline-item .dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1rem;
+            height: 1rem;
+            background: #3B82F6;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            border: 2px solid white;
+        }
+        .timeline-item:nth-child(even) .date {
+            order: 2;
+            padding-left: 1.5rem;
+            padding-right: 0;
+            text-align: left;
+        }
+        .timeline-item:nth-child(even) .content {
+            order: 1;
+            padding-right: 1.5rem;
+            padding-left: 0;
+        }
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 18px;
+                transform: translateX(0);
+            }
+            .timeline-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .timeline-item .date,
+            .timeline-item .content {
+                width: 100%;
+                padding-left: 0;
+                padding-right: 0;
+                text-align: left;
+            }
+            .timeline-item .date {
+                padding-left: 3rem;
+                margin-bottom: 0.5rem;
+                order: 1;
+            }
+            .timeline-item .content {
+                padding-left: 3rem;
+                order: 2;
+            }
+            .timeline-item .dot {
+                left: 18px;
+                top: 2rem;
+                transform: translateX(-50%);
+            }
+            .timeline-item:nth-child(even) .date {
+                order: 1;
+                padding-left: 3rem;
+                text-align: left;
+            }
+            .timeline-item:nth-child(even) .content {
+                order: 2;
+                padding-left: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white shadow-md py-4 fixed top-0 left-0 w-full z-50">
+        <nav class="container flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-900">Nikhil P.</div>
+            <ul class="flex space-x-6">
+                <li><a href="#about" class="text-gray-600 hover:text-blue-700 transition duration-300">About</a></li>
+                <li><a href="#skills" class="text-gray-600 hover:text-blue-700 transition duration-300">Skills</a></li>
+                <li><a href="#projects" class="text-gray-600 hover:text-blue-700 transition duration-300">Projects</a></li>
+                <li><a href="#experience" class="text-gray-600 hover:text-blue-700 transition duration-300">Experience</a></li>
+                <li><a href="#contact" class="text-gray-600 hover:text-blue-700 transition duration-300">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="pt-20">
+        <section id="hero" class="hero-section-gradient py-20 md:py-32 flex items-center justify-center min-h-screen-70 text-gray-900 overflow-hidden">
+            <div class="container text-center fade-in-on-scroll">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Nikhil Manjunath Putanikar</h1>
+                <p class="text-xl md:text-3xl font-medium mt-4">Full Stack Developer | MERN Stack Specialist</p>
+                <p class="text-lg md:text-xl text-gray-700 mt-6 max-w-2xl mx-auto">
+                    Building dynamic, responsive, and secure web applications with a passion for innovative solutions.
+                </p>
+                <div class="mt-10 space-x-4">
+                    <a href="#projects" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">Explore Projects</a>
+                    <a href="#contact" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">Let's Connect</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-16 bg-white fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">About Me</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    Get to know my professional journey and what drives my passion for web development.
+                </p>
+                <div class="max-w-3xl mx-auto text-lg leading-relaxed text-gray-700 text-center">
+                    <p class="mb-4">
+                        I am a highly skilled and passionate Full Stack Developer specializing in the MERN stack (MongoDB, Express.js, React.js, Node.js)[: 3]. My expertise lies in architecting and building dynamic, responsive, and secure web applications from conception to deployment.
+                    </p>
+                    <p class="mb-4">
+                        With a strong command of React.js, I excel at developing modular, component-based UIs and implementing seamless routing with React Router[: 4]. I leverage Tailwind CSS and Framer Motion to craft visually appealing interfaces and enhance user experience through modern design and animations[: 4]. My approach to development emphasizes clean code, scalability, and adherence to industry best practices, ensuring robust and maintainable solutions.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-16 bg-gray-50 fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">Skills</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    A visual overview of my core technical competencies and the technologies I am proficient in.
+                </p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="chart-container bg-white p-4 rounded-lg shadow-md flex items-center justify-center border border-gray-200">
+                            <canvas id="skillsChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Expertise Snapshot:</h3>
+                        <ul class="text-lg text-gray-700 space-y-2">
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">🚀</span> MERN Stack (MongoDB, Express.js, React.js, Node.js) </li>
+                           <li class="flex items-center"><span class="text-blue-600 mr-2">💻</span> Frontend: React.js, JavaScript , HTML5, CSS3, Tailwind CSS , Framer Motion </li>
+                            <li class="flex items-center"><span class="text-blue-600 mr-2">⚙️</span> Backend: Node.js , Express.js , RESTful APIs , Authentication (Passport.js) </li>
+                        <li class="flex items-center"><span class="text-blue-600 mr-2">🗄️</span> Databases: MongoDB </li>
+                            <li class="flex items-center"><span class="text-blue-600 mr-2">🔄</span> Version Control: Git , GitHub </li>
+                            <li class="flex items-center"><span class="text-blue-600 mr-2">🏗️</span> CI/CD: Jenkins </li>
+                            <li class="flex items-center"><span class="text-blue-600 mr-2">🧪</span> Testing: Manual & Automation Testing </li>
+                            <li class="flex items-center"><span class="text-blue-600 mr-2">🧠</span> Concepts: IoT , Artificial Intelligence, Computer Vision (YOLO) </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-16 bg-white fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">My Projects</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    Explore detailed examples of my work, demonstrating practical application of my skills and problem-solving abilities. Click on a card for more details!
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="project-card bg-gray-50 rounded-lg shadow-md p-6 flex flex-col items-start cursor-pointer transition duration-300 transform hover:translate-y-[-5px] hover:shadow-xl" data-project-id="wanderlust">
+                       <h3 class="text-2xl font-semibold text-gray-800 mb-3">WanderLust - Travel Listing App</h3>
+                        <p class="text-gray-700 text-base mb-4 flex-grow">
+                            A responsive full-stack travel listing platform, enabling users to explore and manage travel listings[: 51].
+                        </p>
+                        <ul class="text-sm text-gray-600 mb-4 flex flex-wrap">
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">MERN Stack </li>
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">React.js </li>
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">Node.js </li>
+                        </ul>
+                        <span class="text-blue-600 font-medium">Click for details →</span>
+                    </div>
+
+                    <div class="project-card bg-gray-50 rounded-lg shadow-md p-6 flex flex-col items-start cursor-pointer transition duration-300 transform hover:translate-y-[-5px] hover:shadow-xl" data-project-id="iot-traffic">
+                       <h3 class="text-2xl font-semibold text-gray-800 mb-3">IoT Traffic Light Management</h3>
+                        <p class="text-gray-700 text-base mb-4 flex-grow">
+                           An innovative system providing real-time traffic insights using computer vision and IoT.
+                        </p>
+                        <ul class="text-sm text-gray-600 mb-4 flex flex-wrap">
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">IoT </li>
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">Computer Vision </li>
+                        </ul>
+                        <span class="text-blue-600 font-medium">Click for details →</span>
+                    </div>
+
+                    <div class="project-card bg-gray-50 rounded-lg shadow-md p-6 flex flex-col items-start cursor-pointer transition duration-300 transform hover:translate-y-[-5px] hover:shadow-xl" data-project-id="gcad">
+                       <h3 class="text-2xl font-semibold text-gray-800 mb-3">GCAD (Global Confluence) </h3>
+                        <p class="text-gray-700 text-base mb-4 flex-grow">
+                            A full-stack web application developed to enhance global data collaboration
+                        </p>
+                        <ul class="text-sm text-gray-600 mb-4 flex flex-wrap">
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">MERN Stack </li>
+                            <li class="mr-2 mb-1 px-2 py-1 bg-blue-100 rounded-full text-blue-800">REST API </li>
+                        </ul>
+                        <span class="text-blue-600 font-medium">Click for details →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="projectModal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="close-button" id="closeModal">✕</button>
+                <h3 id="modalTitle" class="text-3xl font-bold text-gray-800 mb-4"></h3>
+                <p id="modalDescription" class="text-gray-700 text-lg mb-4 leading-relaxed"></p>
+                <h4 class="text-xl font-semibold text-gray-800 mb-2">Technologies Used:</h4>
+                <ul id="modalTechStack" class="flex flex-wrap gap-2 mb-6"></ul>
+                <a id="modalGithubLink" href="#" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 transform hover:scale-105">
+                    View GitHub Repository →
+                </a>
+            </div>
+        </div>
+
+        <section id="experience" class="py-16 bg-gray-50 fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">Work Experience</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    My professional journey, highlighting key roles and significant contributions.
+                </p>
+                <div class="max-w-4xl mx-auto timeline">
+                    <div class="timeline-item">
+                        <div class="date">January 2024 - July 2024 </div>
+                        <div class="dot"></div>
+                        <div class="content">
+                            <h3 class="text-xl font-semibold text-gray-800">R&D Web Developer Intern</h3>
+                            <p class="text-lg text-blue-600 mb-2">SCHNEIDER ELECTRIC, Bengaluru </p>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li>**Project: GCAD (Global Confluence) - MERN Stack:** Developed a comprehensive full-stack web application using a REST API to enhance global data collaboration. Built the frontend using React.js, focusing on modular components and ensuring a responsive user experience[: 22]. Handled the backend with Node.js (Express.js), establishing secure API endpoints and efficient routing[: 23].</li>
+                                <li>**Project: HULK - Test Automation:** Integrated CI/CD Pipeline with Jenkins on GitHub for manual and automation testing.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="date">January 2023 - March 2023 </div>
+                        <div class="dot"></div>
+                        <div class="content">
+                            <h3 class="text-xl font-semibold text-gray-800">Trainee</h3>
+                            <p class="text-lg text-blue-600 mb-2">ROBERT BOSCH, Bengaluru</p>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li>Gained hands-on experience in Programmable Logic Controllers (PLC) used in industrial automation</li>
+                                <li>Designed and implemented Ladder Logic programs for automation systems.</li>
+                                <li>Developed logic for real-world automation tasks such as conveyor systems, motor control, sensors, and actuators.</li>
+                                <li>Understood and applied industrial safety standards and troubleshooting techniques.</li>
+                                <li>Collaborated with engineers on real-time projects and participated in on-site testing and commissioning.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="py-16 bg-white fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">Education & Certifications</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    My academic foundation and commitment to continuous learning through specialized certifications.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-3">Education </h3>
+                        <ul class="text-lg text-gray-700 space-y-2">
+                            <li>
+                                <span class="font-medium">B.TECH - ELECTRONICS AND COMMUNICATION</span><br>
+                                Dayananda Sagar University, Bangalore <br>
+                                November 2020 - November 2024
+                            </li>
+                            <li>
+                                <span class="font-medium">12TH</span><br>
+                                RTES PU College, Ranebennur 
+                            </li>
+                            <li>
+                                <span class="font-medium">10TH - CBSE </span><br>
+                                Cambridge Public School, Ranebennur 
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-3">Certifications </h3>
+                        <ul class="text-lg text-gray-700 space-y-2">
+                            <li><span class="font-medium">MERN Stack Web Development </span> (January 2025 - June 2025) </li>
+
+                            <li><span class="font-medium">UNIVERSITY OF HELSINKI: Artificial Intelligence </span> (March 2023 - July 2025) </li>
+                            <li><span class="font-medium">UNSTOP: Product Management </span> (January 2023 - February 2023) </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements" class="py-16 bg-gray-50 fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">Achievements </h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    Recognition and successes that highlight my competitive spirit and dedication.
+                </p>
+                <div class="max-w-2xl mx-auto">
+                    <ul class="list-none space-y-3 text-xl text-gray-700">
+                        <li class="flex items-center"><span class="text-blue-600 text-2xl mr-3">🏆</span> 2nd Place in State Level Chess</li>
+                        <li class="flex items-center"><span class="text-blue-600 text-2xl mr-3">🏅</span> Hackathon 2nd Place </li>
+                        <li class="flex items-center"><span class="text-blue-600 text-2xl mr-3">🥇</span> College Project Competition Winner </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-16 bg-white fade-in-on-scroll">
+            <div class="container">
+                <h2 class="section-heading">Get In Touch</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                    I'm always open to new opportunities, collaborations, and discussions. Feel free to reach out!
+                </p>
+                <div class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-lg">
+                    <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 border border-gray-200">
+                        <span class="text-blue-600 text-2xl mr-4">✉️</span>
+                        <a href="mailto:putanikarnikhil7@gmail.com" class="text-gray-700 hover:underline">putanikarnikhil7@gmail.com </a>
+                    </div>
+                    <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 border border-gray-200">
+                        <span class="text-blue-600 text-2xl mr-4">📞</span>
+                        <a href="tel:+919353992086" class="text-gray-700 hover:underline">9353992086 </a>
+                    </div>
+                    <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 border border-gray-200">
+                        <span class="text-blue-600 text-2xl mr-4">🔗</span>
+                        <a href="https://linkedin.com/in/nikhil-putanikar-5135a9261" target="_blank" class="text-gray-700 hover:underline">LinkedIn Profile</a>
+                    </div>
+                    <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 border border-gray-200">
+                        <span class="text-blue-600 text-2xl mr-4">🐙</span>
+                        <a href="https://github.com/putanikarnikhil" target="_blank" class="text-gray-700 hover:underline">GitHub Profile </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-10">
+        <div class="container text-center text-gray-400">
+            &copy; 2025 Nikhil Manjunath Putanikar. All rights reserved.
+        </div>
+    </footer>
+
+    <div class="scroll-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">
+        ⬆️ Top
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.querySelector('header');
+            const navLinks = document.querySelectorAll('nav ul li a');
+            const sections = document.querySelectorAll('section[id]');
+            const scrollToTopBtn = document.querySelector('.scroll-to-top');
+            const projectCards = document.querySelectorAll('.project-card');
+            const projectModal = document.getElementById('projectModal');
+            const closeModalBtn = document.getElementById('closeModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalTechStack = document.getElementById('modalTechStack');
+            const modalGithubLink = document.getElementById('modalGithubLink');
+
+            const projectDetails = {
+                'wanderlust': {
+                    title: 'WanderLust - Travel Listing Web Application',
+                    description: 'Developed a comprehensive and responsive full-stack travel listing platform. The application allows users to create, view, and manage travel listings with rich details. It integrates secure user authentication and authorization, dynamic image handling, and interactive mapping features. Robust server-side validation and custom middleware were implemented to ensure a secure and enhanced user experience. The architecture is modular and component-driven, ensuring high maintainability.',
+                    techStack: ['MERN Stack', 'React.js', 'Node.js', 'Express.js', 'MongoDB', 'Cloudinary', 'Multer', 'Passport.js', 'Leaflet.js', 'OpenStreetMap', 'Joi', 'Method-Override', 'Tailwind CSS'],
+                    github: 'https://github.com/putanikarnikhil/Web-Aplication-'
+                },
+                'iot-traffic': {
+                    title: 'IoT-Based Intelligent Traffic Light Management',
+                    description: 'This innovative system provides real-time insights into traffic patterns using advanced computer vision. It allows for dynamic adjustments to traffic signals based on current conditions, optimizing traffic flow and reducing congestion. The system leverages the YOLO (You Only Look Once) algorithm for object detection and is implemented on a Raspberry Pi, demonstrating practical application of IoT and AI in smart city solutions.',
+                    techStack: ['IoT', 'Computer Vision', 'YOLO Algorithm', 'Raspberry Pi', 'Python'],
+                    github: '#'
+                },
+                'gcad': {
+                    title: 'GCAD (Global Confluence) - MERN Stack',
+                    description: 'As an R&D Web Developer Intern at Schneider Electric, I developed a comprehensive full-stack web application named GCAD. This project utilized a REST API to significantly enhance global data collaboration within the organization. The frontend was built with React.js, prioritizing modular components and a responsive user experience. The backend, handled with Node.js and Express.js, focused on establishing secure API endpoints and efficient routing to support seamless data exchange.',
+                    techStack: ['MERN Stack', 'React.js', 'Node.js', 'Express.js', 'REST API', 'JavaScript', 'HTML', 'CSS'],
+                    github: '#'
+                }
+            };
+
+            function wrapLabel(label, maxCharPerLine) {
+                if (label.length <= maxCharPerLine) {
+                    return label;
+                }
+                const words = label.split(' ');
+                let lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                    if ((currentLine + word).length <= maxCharPerLine) {
+                        currentLine += (currentLine === '' ? '' : ' ') + word;
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    }
+                });
+                lines.push(currentLine);
+                return lines;
+            }
+
+            const skillData = {
+                labels: ['React.js', 'Node.js', 'MongoDB', 'Express.js', 'JavaScript', 'Python', 'AI/ML Concepts', 'Jenkins'],
+                datasets: [{
+                    label: 'Proficiency',
+                    data: [90, 85, 80, 85, 90, 75, 70, 65],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(249, 115, 22, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(234, 179, 8, 0.8)',
+                        'rgba(6, 182, 212, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(100, 116, 139, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(34, 197, 94, 1)',
+                        'rgba(249, 115, 22, 1)',
+                        'rgba(168, 85, 247, 1)',
+                        'rgba(234, 179, 8, 1)',
+                        'rgba(6, 182, 212, 1)',
+                        'rgba(236, 72, 153, 1)',
+                        'rgba(100, 116, 139, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+            const skillsChart = new Chart(skillsCtx, {
+                type: 'bar',
+                data: skillData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x + '%';
+                                    }
+                                    return label;
+                                },
+                                title: function(context) {
+                                    return wrapLabel(context[0].label, 20);
+                                }
+                            },
+                            displayColors: false,
+                            backgroundColor: 'rgba(30,41,59,0.9)',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            padding: 10,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Proficiency (%)',
+                                color: '#475569',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#475569'
+                            },
+                            grid: {
+                                color: '#E2E8F0',
+                                drawBorder: false
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#475569',
+                                callback: function(value, index, values) {
+                                    const label = this.getLabelForValue(value);
+                                    return wrapLabel(label, 16);
+                                },
+                                font: { size: 13 }
+                            },
+                            grid: {
+                                color: '#E2E8F0',
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-on-scroll').forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        const headerHeight = header.offsetHeight;
+                        const elementPosition = targetSection.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - headerHeight - 20;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            const highlightNavLink = () => {
+                let currentActive = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - header.offsetHeight - 50;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+                        currentActive = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('header-active-link');
+                    if (link.getAttribute('href').includes(currentActive)) {
+                        link.classList.add('header-active-link');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', highlightNavLink);
+            highlightNavLink();
+
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 400) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+
+            projectCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const projectId = this.dataset.projectId;
+                    const project = projectDetails[projectId];
+
+                    if (project) {
+                        modalTitle.textContent = project.title;
+                        modalDescription.textContent = project.description;
+                        modalTechStack.innerHTML = '';
+                        project.techStack.forEach(tech => {
+                            const li = document.createElement('li');
+                            li.className = 'px-3 py-1 bg-blue-100 rounded-full text-blue-800 text-sm';
+                            li.textContent = tech;
+                            modalTechStack.appendChild(li);
+                        });
+
+                        if (project.github && project.github !== '#') {
+                            modalGithubLink.href = project.github;
+                            modalGithubLink.style.display = 'inline-block';
+                        } else {
+                            modalGithubLink.style.display = 'none';
+                        }
+
+                        projectModal.classList.add('open');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                projectModal.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+
+            projectModal.addEventListener('click', (e) => {
+                if (e.target === projectModal) {
+                    projectModal.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && projectModal.classList.contains('open')) {
+                    projectModal.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
